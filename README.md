@@ -6,8 +6,8 @@ Build the app with `mvn clean package`
 
 Run the app with `java -jar influence-calculator-1.0-SNAPSHOT.jar [[0,1,0],[1,0,0],[0,0,0]] 1`
 
-- The first parameter is the input grid.  
--- Ensure the grid argument does not contain spaces
+- The first parameter is the input grid.
+-- _Note:_ Ensure the grid argument does not contain spaces
 - The second parameter is the number steps the influence can make
 -- The steps are non-diagonal
 
