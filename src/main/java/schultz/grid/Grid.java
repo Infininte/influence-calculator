@@ -19,12 +19,18 @@ public class Grid {
     private int[][] internalArray;
     private int sizeOfPositiveInfluence;
 
-    public Grid(int[][] inputGrid, int sizeOfPositiveInfluence){
+    private Grid(int[][] inputGrid, int sizeOfPositiveInfluence){
         this.internalArray = inputGrid;
         this.sizeOfPositiveInfluence = sizeOfPositiveInfluence;
     }
 
-    public List<PositivePoint> getPositivePoints() {
+    public Long getTotalPositiveInfluence() {
+        return getPositivePointsOfInfluence().stream()
+                .distinct()
+                .count();
+    }
+
+    private List<PositivePoint> getPositivePoints() {
         List<PositivePoint> positivePoints = new ArrayList<>();
 
         for(int i = 0; i < this.internalArray[0].length; i++){
@@ -38,7 +44,7 @@ public class Grid {
         return positivePoints;
     }
 
-    public List<Point> getPositivePointsOfInfluence() {
+    private List<Point> getPositivePointsOfInfluence() {
         return getPositivePoints().stream()
                 .map(positivePoint -> positivePoint.getPointsOfInfluence(this.sizeOfPositiveInfluence))
                 .flatMap(List::stream)
@@ -47,12 +53,6 @@ public class Grid {
                 .filter(point -> point.getY() >= 0)
                 .filter(point -> point.getY() < this.internalArray.length)
                 .collect(Collectors.toList());
-    }
-
-    public Long getCountOfPositiveInfluence() {
-        return getPositivePointsOfInfluence().stream()
-                .distinct()
-                .count();
     }
 
     public static Grid fromArguments(String inputGrid, String inputSizeOfInfluence) {

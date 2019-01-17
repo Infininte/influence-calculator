@@ -3,184 +3,137 @@ package schultz.grid;
 import org.junit.Test;
 import schultz.exception.ArgumentIsNotAGrid;
 import schultz.exception.SizeOfInfluenceIsNotAPositiveInteger;
-import schultz.point.Point;
-import schultz.point.PositivePoint;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
 
 public class GridTest {
 
     @Test
-    public void constructor_setsGridAndInfluence() {
-        int[][] inputGrid = {{0, 0, 0}, {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        assertEquals(inputGrid, instance.getInternalArray());
-        assertEquals(1, instance.getSizeOfPositiveInfluence());
+    public void getTotalPositiveInfluence_zeroSizeOfInfluence() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 1, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(1), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints() {
-        int[][] inputGrid = {{0, 0, 0}, {0, 1, 0}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertThat(instance.getPositivePoints(), contains(new PositivePoint(1, 1)));
+    public void getTotalPositiveInfluences_many() {
+        String inputGrid = "[[0, 1, 0]," +
+                            "[1, 1, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(3), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints_many() {
-        int[][] inputGrid = {{0, 1, 0},
-                            {1, 1, 0}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertThat(instance.getPositivePoints(), containsInAnyOrder(
-                                            new PositivePoint(1, 0),
-                new PositivePoint(0, 1),    new PositivePoint(1, 1)));
+    public void getTotalPositiveInfluence_highNumber() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 15, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(1), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints_highNumber() {
-        int[][] inputGrid = {{0, 0, 0}, {0, 15, 0}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertThat(instance.getPositivePoints(), contains(new PositivePoint(1, 1)));
+    public void getTotalPositiveInfluence_negative() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, -1, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(0), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints_negative() {
-        int[][] inputGrid = {{0, 0, 0}, {0, -1, 0}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertTrue(instance.getPositivePoints().isEmpty());
+    public void getTotalPositiveInfluence_negativeAndPositve() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, -1, 1]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(1), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints_negativeAndPositve() {
-        int[][] inputGrid = {{0, 0, 0}, {0, -1, 1}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertThat(instance.getPositivePoints(), contains(new PositivePoint(2, 1)));
+    public void getTotalPositiveInfluence_entireGridIsZeroes() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(0), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePoints_allZero() {
-        int[][] inputGrid = {{0, 0, 0}, {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 0);
-        assertTrue(instance.getPositivePoints().isEmpty());
+    public void getTotalPositiveInfluence_entireGridIsPositive() {
+        String inputGrid = "[[1, 1, 1]," +
+                            "[1, 1, 1]]";
+        Grid instance = Grid.fromArguments(inputGrid, "0");
+        assertEquals(Long.valueOf(6), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePointsOfInfluence_inCenter() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {0, 1, 0},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        List<Point> pointsOfInfluence = instance.getPositivePointsOfInfluence();
-        assertThat(pointsOfInfluence, containsInAnyOrder(
-                                    new Point(1, 0),
-                new Point(0, 1),    new Point(1, 1), new Point(2, 1),
-                                    new Point(1, 2)));
+    public void getTotalPositiveInfluence_inCenterWithOneSizeOfInfluence() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 1, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(5), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePointsOfInfluence_onBottom() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {0, 0, 0},
-                            {0, 1, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        List<Point> pointsOfInfluence = instance.getPositivePointsOfInfluence();
-        assertThat(pointsOfInfluence, containsInAnyOrder(
-                                    new Point(1, 1),
-                new Point(0, 2),    new Point(1, 2), new Point(2, 2)));
+    public void getTotalPositiveInfluence_onBottomWithOneSizeOfInfluence() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 0, 0]," +
+                            "[0, 1, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(4), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePointsOfInfluence_onLeftSide() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {1, 0, 0},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        List<Point> pointsOfInfluence = instance.getPositivePointsOfInfluence();
-        assertThat(pointsOfInfluence, containsInAnyOrder(
-                new Point(0, 0),
-                new Point(0, 1),    new Point(1, 1),
-                new Point(0, 2)));
+    public void  getTotalPositiveInfluence_onLeftSideWithOneSizeOfInfluence() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[1, 0, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(4), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPositivePointsOfInfluence_onTop() {
-        int[][] inputGrid = {{0, 1, 0},
-                            {0, 0, 0},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        List<Point> pointsOfInfluence = instance.getPositivePointsOfInfluence();
-        assertThat(pointsOfInfluence, containsInAnyOrder(
-                new Point(0, 0),    new Point(1, 0), new Point(2, 0),
-                                    new Point(1, 1)));
+    public void getTotalPositiveInfluence_onTopWithOneSizeOfInfluence() {
+        String inputGrid = "[[0, 1, 0]," +
+                            "[0, 0, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(4), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getPointsOfInfluenceWithinBounds_onRightSide() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {0, 0, 1},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 1);
-        List<Point> pointsOfInfluence = instance.getPositivePointsOfInfluence();
-        assertThat(pointsOfInfluence, containsInAnyOrder(
-                new Point(2, 0),
-                new Point(1, 1),    new Point(2, 1),
-                new Point(2, 2)));
+    public void getTotalPositiveInfluence_onRightSideWithOneSizeOfInfluence() {
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 0, 1]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(4), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getCountOfPositiveInfluence_one() {
-        int[][] inputGrid = {{}};
-        Grid instance = spy(new Grid(inputGrid, 1));
-
-        doReturn(Arrays.asList(new Point(0, 0))).when(instance).getPositivePointsOfInfluence();
-        doCallRealMethod().when(instance).getCountOfPositiveInfluence();
-
-        assertEquals(Long.valueOf(1), instance.getCountOfPositiveInfluence());
+    public void getTotalPositiveInfluence_inUpperRightCornerOneSizeOfInfluence() {
+        String inputGrid = "[[1, 0, 0]," +
+                            "[0, 0, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(3), instance.getTotalPositiveInfluence());
     }
 
     @Test
-    public void getCountOfPositiveInfluence_two() {
-        int[][] inputGrid = {{}};
-        Grid instance = spy(new Grid(inputGrid, 1));
-
-        doReturn(Arrays.asList(new Point(0, 0), new Point(1, 0))).when(instance).getPositivePointsOfInfluence();
-        doCallRealMethod().when(instance).getCountOfPositiveInfluence();
-
-        assertEquals(Long.valueOf(2), instance.getCountOfPositiveInfluence());
-    }
-
-    @Test
-    public void getCountOfPositiveInfluence_ignoresDuplicates() {
-        int[][] inputGrid = {{}};
-        Grid instance = spy(new Grid(inputGrid, 1));
-
-        doReturn(Arrays.asList(new Point(1, 0), new Point(1, 0))).when(instance).getPositivePointsOfInfluence();
-        doCallRealMethod().when(instance).getCountOfPositiveInfluence();
-
-        assertEquals(Long.valueOf(1), instance.getCountOfPositiveInfluence());
+    public void getTotalPositiveInfluence_doesNotDoubleCountOverlaps() {
+        String inputGrid = "[[1, 0, 0]," +
+                            "[0, 1, 0]," +
+                            "[0, 0, 1]]";
+        Grid instance = Grid.fromArguments(inputGrid, "1");
+        assertEquals(Long.valueOf(7), instance.getTotalPositiveInfluence());
     }
 
     @Test
     public void getPointsOfInfluenceWithinBounds_entireGrid() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {0, 1, 0},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 2);
-        assertEquals(Long.valueOf(9), instance.getCountOfPositiveInfluence());
-    }
-
-    @Test
-    public void getPointsOfInfluenceWithinBounds_nothingPositive() {
-        int[][] inputGrid = {{0, 0, 0},
-                            {0, 0, 0},
-                            {0, 0, 0}};
-        Grid instance = new Grid(inputGrid, 2);
-        assertEquals(Long.valueOf(0), instance.getCountOfPositiveInfluence());
+        String inputGrid = "[[0, 0, 0]," +
+                            "[0, 1, 0]," +
+                            "[0, 0, 0]]";
+        Grid instance = Grid.fromArguments(inputGrid, "2");
+        assertEquals(Long.valueOf(9), instance.getTotalPositiveInfluence());
     }
 
     @Test
